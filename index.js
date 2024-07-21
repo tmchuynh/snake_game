@@ -7,7 +7,8 @@ let gameOver = false;
 let foodX, foodY;
 let snakeX = 15, snakeY = 15;
 let velocityX = 0, velocityY = 0;
-let obstacleX, obstacleY;
+let obstacleX = 25, obstacleY = 17;
+let numOfObstacles = 1;
 let snakeBody = [];
 let setIntervalId;
 let score = 0;
@@ -98,9 +99,14 @@ const updateFoodPosition = () => {
   foodPoints = foodColors[foodColor]; // Set points based on color
 };
 
-const updateObstaclePosition = () => {
+const getObstaclePosition = () => {
   obstacleX = Math.floor(Math.random() * 30) + 1;
   obstacleY = Math.floor(Math.random() * 30) + 1;
+};
+
+const updateSnakePosition = () => {
+  snakeX = Math.floor(Math.random() * (29 - 5 + 1)) + 5; // Random value between 5 and 29 inclusive
+  snakeY = Math.floor(Math.random() * (28 - 2 + 1)) + 2; // Random value between 2 and 28 inclusive
 };
 
 const getRandomColor = () => {
@@ -117,8 +123,7 @@ const handleGameOver = () => {
 const resetGame = () => {
   // Reset all necessary variables and state
   gameOver = false;
-  snakeX = 15;
-  snakeY = 15;
+  updateSnakePosition();
   velocityX = 0;
   velocityY = 0;
   snakeBody = [];
