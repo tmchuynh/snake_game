@@ -1,11 +1,19 @@
 const playBoard = document.querySelector(".play-board");
 const scoreElement = document.querySelector(".score");
 const highScoreElement = document.querySelector(".high-score");
+const description = document.querySelector(".description");
 const controls = document.querySelectorAll(".controls i");
 const obstaclesNum = document.querySelector(".obstacles");
 const increaseObstaclesNum = document.querySelector(".increase");
 const decreaseObstaclesNum = document.querySelector(".decrease");
 const checkSwitch = document.querySelector(".form-check-input");
+
+// TODO: High Score based on how many obstacles there was in the board during the game played
+// TODO: Leaderboard ? with button to show leaderboard ?
+
+// ! Still needs a title
+// ! game-details needs to be styled better
+
 
 // Buttons to automatically adjust the number of obstacles
 const easy = document.querySelector(".easy");
@@ -236,12 +244,16 @@ function checkSelfCollision(html) {
 
 function eatFood() {
   if (snakeX === foodX && snakeY === foodY) {
-    const numOfSegments = foodColors[foodColor]; // Number of segments added is based on food color
+    description.innerHTML = "Points earned: " + foodColors[foodColor];
+    setTimeout(() => {
+      description.innerHTML = "";
+    }, 2000);
+    const numOfSegments = foodColors[foodColor];
     for (let i = 0; i < numOfSegments; i++) {
-      snakeBody.push({ x: snakeX, y: snakeY, color: foodColor });
+      snakeBody.push({ x: snakeX, y: snakeY, color: foodColor }); // Add new segments to snake depending on points added
     }
     lastFoodColor = foodColor;
-    score += foodPoints; // Add points based on food color
+    score += foodPoints;
     highScore = Math.max(score, highScore);
     localStorage.setItem("high-score", highScore);
     scoreElement.innerText = `Score: ${score}`;
