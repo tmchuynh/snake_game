@@ -11,7 +11,7 @@ let obstacleX = 25, obstacleY = 17;
 let obstacle;
 let numOfObstacles = 1;
 let snakeBody = [];
-let setIntervalId;
+let setIntervalId, gameOverInterval;
 let score = 0;
 let highScore = parseInt(localStorage.getItem("high-score")) || 0;
 const foodColors = {
@@ -72,11 +72,6 @@ const initGame = () => {
     color: lastFoodColor
   };
 
-  // Check for collision with walls
-  if (snakeX <= 0 || snakeX > 30 || snakeY <= 0 || snakeY > 30) {
-    return (gameOver = true);
-  }
-
   // Check for collision with itself
   for (let i = 0; i < snakeBody.length; i++) {
     food += `<div class="head" style="background-color: ${snakeBody[i].color}; grid-area: ${snakeBody[i].y} / ${snakeBody[i].x}"></div>`;
@@ -99,6 +94,7 @@ const addObstacles = () => {
     obstacle = `<i class="bi bi-exclamation-diamond-fill obstacle gradient-text" style="grid-area: ${obstacleY} / ${obstacleX}"></i>`
     playBoard.innerHTML += obstacle;
   }
+
 
 
 
@@ -125,6 +121,12 @@ const getRandomColor = () => {
   const colors = Object.keys(foodColors);
   return colors[Math.floor(Math.random() * colors.length)];
 };
+
+const checkGameState = () => {
+  if (snakeX === obstacleX && snakeY === obstacleY) {
+    return (gameOver = true);
+  }
+}
 
 const handleGameOver = () => {
   clearInterval(setIntervalId);
@@ -168,4 +170,5 @@ const changeDirection = (e) => {
 updateFoodPosition();
 addObstacles();
 setIntervalId = setInterval(initGame, 200);
+gameOverInterval = setInterval(checkGameState, 200);
 document.addEventListener("keyup", changeDirection);
