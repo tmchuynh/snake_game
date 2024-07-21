@@ -94,10 +94,6 @@ const addObstacles = () => {
     obstacle = `<i class="bi bi-exclamation-diamond-fill obstacle gradient-text" style="grid-area: ${obstacleY} / ${obstacleX}"></i>`
     playBoard.innerHTML += obstacle;
   }
-
-
-
-
 }
 
 const updateFoodPosition = () => {
