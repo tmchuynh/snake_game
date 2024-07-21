@@ -5,12 +5,9 @@ const controls = document.querySelectorAll(".controls i");
 
 let gameOver = false;
 let foodX, foodY;
-let snakeX = 15,
-  snakeY = 15;
-let velocityX = 0,
-  velocityY = 0;
+let snakeX = 15, snakeY = 15;
+let velocityX = 0, velocityY = 0;
 let obstacleX, obstacleY;
-let randomNumber = 0;
 let snakeBody = [];
 let setIntervalId;
 let score = 0;
@@ -23,17 +20,14 @@ const foodColors = {
   purple: 5 // Magenta
 };
 
-<i class="bi bi-exclamation-diamond-fill"></i>
-
 let foodColor = "red";
 let foodPoints;
-let numOfSegments;
 let lastFoodColor = "green";
 
 highScoreElement.innerText = `High Score: ${highScore}`;
 
 // Calling changeDirection on each key click and passing key dataset value as an object
-controls.forEach((button) =>
+controls.forEach(button =>
   button.addEventListener("click", () =>
     changeDirection({ key: button.dataset.key })
   )
@@ -42,17 +36,17 @@ controls.forEach((button) =>
 const initGame = () => {
   if (gameOver) return handleGameOver();
 
-  // Create HTML for food and special food
+  // Create HTML for food
   let html = `<div class="food" style="background-color: ${foodColor}; grid-area: ${foodY} / ${foodX}"></div>`;
 
   if (snakeX === foodX && snakeY === foodY) {
-    numOfSegments = foodColors[foodColor]; // The same number of points gained is how many segments gets added to the snake's body
-    for (i = 0; i < numOfSegments; i++) {
+    const numOfSegments = foodColors[foodColor]; // Number of segments added is based on food color
+    for (let i = 0; i < numOfSegments; i++) {
       snakeBody.push({ x: snakeX, y: snakeY, color: foodColor });
     }
     lastFoodColor = foodColor;
     score += foodPoints; // Add points based on food color
-    highScore = score >= highScore ? score : highScore;
+    highScore = Math.max(score, highScore);
     localStorage.setItem("high-score", highScore);
     scoreElement.innerText = `Score: ${score}`;
     highScoreElement.innerText = `High Score: ${highScore}`;
@@ -83,7 +77,7 @@ const initGame = () => {
 
   // Check for collision with itself
   for (let i = 0; i < snakeBody.length; i++) {
-    html += `<div class="head" style="background-color: ${lastFoodColor}; grid-area: ${snakeBody[i].y} / ${snakeBody[i].x}"></div>`;
+    html += `<div class="head" style="background-color: ${snakeBody[i].color}; grid-area: ${snakeBody[i].y} / ${snakeBody[i].x}"></div>`;
 
     if (
       i !== 0 &&
@@ -101,13 +95,13 @@ const updateFoodPosition = () => {
   foodX = Math.floor(Math.random() * 30) + 1;
   foodY = Math.floor(Math.random() * 30) + 1;
   foodColor = getRandomColor();
-  foodPoints = foodColors[foodColor]; // Get points based on color
+  foodPoints = foodColors[foodColor]; // Set points based on color
 };
 
 const updateObstaclePosition = () => {
-  obstacleX = Math.floor(Math.random * 30) + 1;
+  obstacleX = Math.floor(Math.random() * 30) + 1;
   obstacleY = Math.floor(Math.random() * 30) + 1;
-}
+};
 
 const getRandomColor = () => {
   const colors = Object.keys(foodColors);
@@ -130,22 +124,24 @@ const resetGame = () => {
   snakeBody = [];
   lastFoodColor = "green";
   score = 0;
+  highScore = parseInt(localStorage.getItem("high-score")) || 0;
+  highScoreElement.innerText = `High Score: ${highScore}`;
   updateFoodPosition();
   setIntervalId = setInterval(initGame, 200);
 };
 
 const changeDirection = (e) => {
   // Changing velocity value based on key press
-  if (e.key === "ArrowUp" && velocityY != 1) {
+  if (e.key === "ArrowUp" && velocityY !== 1) {
     velocityX = 0;
     velocityY = -1;
-  } else if (e.key === "ArrowDown" && velocityY != -1) {
+  } else if (e.key === "ArrowDown" && velocityY !== -1) {
     velocityX = 0;
     velocityY = 1;
-  } else if (e.key === "ArrowLeft" && velocityX != 1) {
+  } else if (e.key === "ArrowLeft" && velocityX !== 1) {
     velocityX = -1;
     velocityY = 0;
-  } else if (e.key === "ArrowRight" && velocityX != -1) {
+  } else if (e.key === "ArrowRight" && velocityX !== -1) {
     velocityX = 1;
     velocityY = 0;
   }
