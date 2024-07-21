@@ -7,13 +7,18 @@ const increaseObstaclesNum = document.querySelector(".increase");
 const decreaseObstaclesNum = document.querySelector(".decrease");
 const checkSwitch = document.querySelector(".form-check-input");
 
+// Buttons to automatically adjust the number of obstacles
+const easy = document.querySelector(".easy");
+const medium = document.querySelector(".medium");
+const hard = document.querySelector(".hard");
+
 let gameOver = false;
 let foodX, foodY;
 let snakeX = 15, snakeY = 15;
 let velocityX = 0, velocityY = 0;
 let obstacleX = 25, obstacleY = 17;
 let obstacle;
-let numOfObstacles = 1;
+let numOfObstacles = 1; // default
 let snakeBody = [];
 let setIntervalId, gameOverInterval;
 let score = 0;
@@ -85,6 +90,17 @@ const initGame = () => {
 
   // Add obstacles to the HTML
   obstacles.forEach(obstacle => {
+
+    // Check if the obstacle is colliding with any segment of the snake body
+    for (let i = 0; i < snakeBody.length - 1; i++) {
+      // If so, need to change position of the obstacle
+      if (obstacle.x === snakeBody[i].x && obstacle.y === snakeBody[i].y) {
+        updateObstaclePositions();
+      }
+    }
+
+
+
     html += `<i class="bi bi-exclamation-diamond-fill obstacle gradient-text" style="grid-area: ${obstacle.y} / ${obstacle.x}"></i>`;
   });
 
@@ -92,8 +108,8 @@ const initGame = () => {
 };
 
 const updateFoodPosition = () => {
-  foodX = Math.floor(Math.random() * 30) + 3;
-  foodY = Math.floor(Math.random() * 30) + 2;
+  foodX = Math.floor(Math.random() * 30) + 1;
+  foodY = Math.floor(Math.random() * 30) + 1;
   foodColor = getRandomColor();
   foodPoints = foodColors[foodColor]; // Set points based on color
 };
@@ -113,8 +129,8 @@ const updateObstaclePosition = () => {
 };
 
 const updateSnakePosition = () => {
-  snakeX = Math.floor(Math.random() * 19) + 5;
-  snakeY = Math.floor(Math.random() * 26) + 2;
+  snakeX = Math.floor(Math.random() * 20) + 1;
+  snakeY = Math.floor(Math.random() * 30) + 1;
 };
 
 const getRandomColor = () => {
@@ -145,6 +161,24 @@ decreaseObstaclesNum.addEventListener("click", () => {
   obstaclesNum.innerHTML = numOfObstacles;
   updateObstaclePositions();
 })
+
+easy.addEventListener("click", () => {
+  numOfObstacles = 0;
+  obstaclesNum.innerHTML = numOfObstacles;
+  updateObstaclePositions();
+});
+
+medium.addEventListener("click", () => {
+  numOfObstacles = 3;
+  obstaclesNum.innerHTML = numOfObstacles;
+  updateObstaclePositions();
+});
+
+hard.addEventListener("click", () => {
+  numOfObstacles = 10;
+  obstaclesNum.innerHTML = numOfObstacles;
+  updateObstaclePositions();
+});
 
 const resetGame = () => {
   // Reset all necessary variables and state
@@ -185,6 +219,8 @@ updateObstaclePositions();
 setIntervalId = setInterval(initGame, 200);
 gameOverInterval = setInterval(checkGameState, 200);
 document.addEventListener("keyup", changeDirection);
+
+
 function checkSelfCollision(html) {
   for (let i = 0; i < snakeBody.length; i++) {
     html += `<div class="head" style="background-color: ${snakeBody[i].color}; grid-area: ${snakeBody[i].y} / ${snakeBody[i].x}"></div>`;
