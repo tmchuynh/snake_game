@@ -99,8 +99,6 @@ const initGame = () => {
       }
     }
 
-
-
     html += `<i class="bi bi-exclamation-diamond-fill obstacle gradient-text" style="grid-area: ${obstacle.y} / ${obstacle.x}"></i>`;
   });
 
@@ -153,37 +151,36 @@ const handleGameOver = () => {
 increaseObstaclesNum.addEventListener("click", () => {
   numOfObstacles++;
   obstaclesNum.innerHTML = numOfObstacles;
-  updateObstaclePositions();
+  updateAll();
 })
 
 decreaseObstaclesNum.addEventListener("click", () => {
   numOfObstacles--;
   obstaclesNum.innerHTML = numOfObstacles;
-  updateObstaclePositions();
+  updateAll();
 })
 
 easy.addEventListener("click", () => {
   numOfObstacles = 0;
   obstaclesNum.innerHTML = numOfObstacles;
-  updateObstaclePositions();
+  updateAll();
 });
 
 medium.addEventListener("click", () => {
   numOfObstacles = 3;
   obstaclesNum.innerHTML = numOfObstacles;
-  updateObstaclePositions();
+  updateAll();
 });
 
 hard.addEventListener("click", () => {
   numOfObstacles = 10;
   obstaclesNum.innerHTML = numOfObstacles;
-  updateObstaclePositions();
+  updateAll();
 });
 
 const resetGame = () => {
   // Reset all necessary variables and state
   gameOver = false;
-  updateSnakePosition();
   velocityX = 0;
   velocityY = 0;
   snakeBody = [];
@@ -191,8 +188,7 @@ const resetGame = () => {
   score = 0;
   highScore = parseInt(localStorage.getItem("high-score")) || 0;
   highScoreElement.innerText = `High Score: ${highScore}`;
-  updateFoodPosition();
-  updateObstaclePosition();
+  updateAll();
   setIntervalId = setInterval(initGame, 200);
 };
 
@@ -220,6 +216,12 @@ setIntervalId = setInterval(initGame, 200);
 gameOverInterval = setInterval(checkGameState, 200);
 document.addEventListener("keyup", changeDirection);
 
+
+function updateAll() {
+  updateFoodPosition();
+  updateSnakePosition();
+  updateObstaclePositions();
+}
 
 function checkSelfCollision(html) {
   for (let i = 0; i < snakeBody.length; i++) {
