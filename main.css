@@ -17,8 +17,8 @@ body {
 }
 
 .wrapper {
-  width: 65vmin;
-  height: 70vmin;
+  width: 75vmin;
+  height: 80vmin;
   display: flex;
   overflow: hidden;
   flex-direction: column;
@@ -69,6 +69,10 @@ button {
   margin: 1px;
 }
 
+.levels button {
+  box-shadow: 3px 5px 12px 1px rgba(115, 115, 115, 0.36);
+}
+
 .play-board {
   height: 100%;
   width: 100%;
@@ -78,7 +82,7 @@ button {
 }
 
 .play-board .obstacle {
-  font-size: 2.5rem;
+  font-size: 1.5rem;
 }
 
 .gradient-text {
