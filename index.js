@@ -38,7 +38,8 @@ const initGame = () => {
   if (gameOver) return handleGameOver();
 
   // Create HTML for food
-  let html = `<div class="food" style="background-color: ${foodColor}; grid-area: ${foodY} / ${foodX}"></div>`;
+  let food = `<div class="food" style="background-color: ${foodColor}; grid-area: ${foodY} / ${foodX}"></div>`;
+  let obstacle = `<i class="bi bi-exclamation-diamond-fill obstacle gradient-text" style="grid-area: ${obstacleY} / ${obstacleX}"></i>`
 
   if (snakeX === foodX && snakeY === foodY) {
     const numOfSegments = foodColors[foodColor]; // Number of segments added is based on food color
@@ -78,7 +79,7 @@ const initGame = () => {
 
   // Check for collision with itself
   for (let i = 0; i < snakeBody.length; i++) {
-    html += `<div class="head" style="background-color: ${snakeBody[i].color}; grid-area: ${snakeBody[i].y} / ${snakeBody[i].x}"></div>`;
+    food += `<div class="head" style="background-color: ${snakeBody[i].color}; grid-area: ${snakeBody[i].y} / ${snakeBody[i].x}"></div>`;
 
     if (
       i !== 0 &&
@@ -89,7 +90,7 @@ const initGame = () => {
     }
   }
 
-  playBoard.innerHTML = html;
+  playBoard.innerHTML = food + obstacle;
 };
 
 const updateFoodPosition = () => {
