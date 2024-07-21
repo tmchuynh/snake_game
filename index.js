@@ -24,7 +24,6 @@ const foodColors = {
 let foodColor = "red";
 let foodPoints;
 let numOfSegments;
-
 let lastFoodColor = "green";
 
 highScoreElement.innerText = `High Score: ${highScore}`;
@@ -44,9 +43,9 @@ const initGame = () => {
 
   if (snakeX === foodX && snakeY === foodY) {
     numOfSegments = foodColors[foodColor]; // The same number of points gained is how many segments gets added to the snake's body
-    for (i = 0; i < numOfSegments; i++ ) {
-      
-    snakeBody.push({ x: snakeX, y: snakeY, color: foodColor });
+    for (i = 0; i < numOfSegments; i++) {
+
+      snakeBody.push({ x: snakeX, y: snakeY, color: foodColor });
     }
     lastFoodColor = foodColor;
     score += foodPoints; // Add points based on food color
