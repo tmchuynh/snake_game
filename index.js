@@ -56,22 +56,7 @@ const initGame = () => {
   // Create HTML for food
   html += `<div class="food" style="background-color: ${foodColor}; grid-area: ${foodY} / ${foodX}"></div>`;
 
-  if (snakeX === foodX && snakeY === foodY) {
-    const numOfSegments = foodColors[foodColor]; // Number of segments added is based on food color
-    for (let i = 0; i < numOfSegments; i++) {
-      snakeBody.push({ x: snakeX, y: snakeY, color: foodColor });
-    }
-    lastFoodColor = foodColor;
-    score += foodPoints; // Add points based on food color
-    highScore = Math.max(score, highScore);
-    localStorage.setItem("high-score", highScore);
-    scoreElement.innerText = `Score: ${score}`;
-    highScoreElement.innerText = `High Score: ${highScore}`;
-    updateFoodPosition();
-    if (positionChange) {
-      updateObstaclePositions();
-    }
-  }
+  eatFood();
 
   // Update snake's head position based on current velocity
   snakeX += velocityX;
@@ -96,13 +81,7 @@ const initGame = () => {
   };
 
   // Check for collision with itself
-  for (let i = 0; i < snakeBody.length; i++) {
-    html += `<div class="head" style="background-color: ${snakeBody[i].color}; grid-area: ${snakeBody[i].y} / ${snakeBody[i].x}"></div>`;
-
-    if (i !== 0 && snakeBody[0].x === snakeBody[i].x && snakeBody[0].y === snakeBody[i].y) {
-      gameOver = true;
-    }
-  }
+  html = checkSelfCollision(html);
 
   // Add obstacles to the HTML
   obstacles.forEach(obstacle => {
@@ -206,3 +185,33 @@ updateObstaclePositions();
 setIntervalId = setInterval(initGame, 200);
 gameOverInterval = setInterval(checkGameState, 200);
 document.addEventListener("keyup", changeDirection);
+function checkSelfCollision(html) {
+  for (let i = 0; i < snakeBody.length; i++) {
+    html += `<div class="head" style="background-color: ${snakeBody[i].color}; grid-area: ${snakeBody[i].y} / ${snakeBody[i].x}"></div>`;
+
+    if (i !== 0 && snakeBody[0].x === snakeBody[i].x && snakeBody[0].y === snakeBody[i].y) {
+      gameOver = true;
+    }
+  }
+  return html;
+}
+
+function eatFood() {
+  if (snakeX === foodX && snakeY === foodY) {
+    const numOfSegments = foodColors[foodColor]; // Number of segments added is based on food color
+    for (let i = 0; i < numOfSegments; i++) {
+      snakeBody.push({ x: snakeX, y: snakeY, color: foodColor });
+    }
+    lastFoodColor = foodColor;
+    score += foodPoints; // Add points based on food color
+    highScore = Math.max(score, highScore);
+    localStorage.setItem("high-score", highScore);
+    scoreElement.innerText = `Score: ${score}`;
+    highScoreElement.innerText = `High Score: ${highScore}`;
+    updateFoodPosition();
+    if (positionChange) {
+      updateObstaclePositions();
+    }
+  }
+}
+

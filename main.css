@@ -1,11 +1,13 @@
 /* Import Google font */
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap");
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: "Open Sans", sans-serif;
 }
+
 body {
   display: flex;
   align-items: center;
@@ -13,6 +15,7 @@ body {
   min-height: 100vh;
   background: #e3f2fd;
 }
+
 .wrapper {
   width: 65vmin;
   height: 70vmin;
@@ -24,6 +27,7 @@ body {
   background: #293447;
   box-shadow: 0 20px 40px rgba(52, 87, 220, 0.2);
 }
+
 .game-details {
   color: #b8c6dc;
   font-weight: 500;
@@ -75,8 +79,8 @@ button {
 
 .play-board .obstacle {
   font-size: 2.5rem;
-  /* color: yellow; */
 }
+
 .gradient-text {
   font-weight: bold; /* Make text bold */
   background: linear-gradient(35deg, red, yellow); /* Gradient colors */
