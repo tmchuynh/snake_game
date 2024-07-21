@@ -2,6 +2,9 @@ const playBoard = document.querySelector(".play-board");
 const scoreElement = document.querySelector(".score");
 const highScoreElement = document.querySelector(".high-score");
 const controls = document.querySelectorAll(".controls i");
+const obstaclesNum = document.querySelector(".obstacles");
+const increaseObstaclesNum = document.querySelector(".increase");
+const decreaseObstaclesNum = document.querySelector(".decrease");
 
 let gameOver = false;
 let foodX, foodY;
@@ -15,14 +18,15 @@ let setIntervalId, gameOverInterval;
 let score = 0;
 let highScore = parseInt(localStorage.getItem("high-score")) || 0;
 const foodColors = {
-  red: 1, // Red
-  green: 2, // Green
-  blue: 3, // Blue
-  yellow: 4, // Yellow
-  purple: 5 // Magenta
+  "#D741A7": 1, // pink
+  "#8A4FFF": 2, // light purple
+  "#0FF4C6": 3, // cyan
+  "#F55D3E": 4, // orange
+  "#6E7E85": 5, // grey
+  "#99621E": 6 // sand
 };
 
-let foodColor = "red";
+let foodColor = "#8A4FFF";
 let foodPoints;
 let lastFoodColor = "green";
 
@@ -84,11 +88,17 @@ const initGame = () => {
       gameOver = true;
     }
   }
-
-  playBoard.innerHTML = food + obstacle;
+  playBoard.innerHTML += food;
 };
 
 const addObstacles = () => {
+  console.log(numOfObstacles);
+  obstaclesNum.innerHTML = numOfObstacles;
+  const allObstacles = document.querySelectorAll('.obstacle');
+  allObstacles.forEach((obstacle) => {
+    obstacle.remove();
+  });
+
   for (let i = 0; i < numOfObstacles; i++) {
     updateObstaclePosition();
     obstacle = `<i class="bi bi-exclamation-diamond-fill obstacle gradient-text" style="grid-area: ${obstacleY} / ${obstacleX}"></i>`
@@ -97,20 +107,20 @@ const addObstacles = () => {
 }
 
 const updateFoodPosition = () => {
-  foodX = Math.floor(Math.random() * 30) + 1;
-  foodY = Math.floor(Math.random() * 30) + 1;
+  foodX = Math.floor(Math.random() * 30) + 3;
+  foodY = Math.floor(Math.random() * 30) + 2;
   foodColor = getRandomColor();
   foodPoints = foodColors[foodColor]; // Set points based on color
 };
 
 const updateObstaclePosition = () => {
-  obstacleX = Math.floor(Math.random() * 30) + 1;
-  obstacleY = Math.floor(Math.random() * 30) + 1;
+  obstacleX = Math.floor(Math.random() * 25) + 1;
+  obstacleY = Math.floor(Math.random() * 25) + 1;
 };
 
 const updateSnakePosition = () => {
-  snakeX = Math.floor(Math.random() * (29 - 5 + 1)) + 5; // Random value between 5 and 29 inclusive
-  snakeY = Math.floor(Math.random() * (28 - 2 + 1)) + 2; // Random value between 2 and 28 inclusive
+  snakeX = Math.floor(Math.random() * 19) + 5;
+  snakeY = Math.floor(Math.random() * 26) + 2;
 };
 
 const getRandomColor = () => {
@@ -129,6 +139,16 @@ const handleGameOver = () => {
   alert("Game Over! Press OK to replay ...");
   resetGame();
 };
+
+increaseObstaclesNum.addEventListener("click", () => {
+  numOfObstacles++;
+  addObstacles();
+})
+
+decreaseObstaclesNum.addEventListener("click", () => {
+  numOfObstacles--;
+  addObstacles();
+})
 
 const resetGame = () => {
   // Reset all necessary variables and state
@@ -163,6 +183,7 @@ const changeDirection = (e) => {
   }
 };
 
+obstaclesNum.innerHTML = numOfObstacles;
 updateFoodPosition();
 addObstacles();
 setIntervalId = setInterval(initGame, 200);
