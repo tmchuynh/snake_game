@@ -9,11 +9,12 @@ const decreaseObstaclesNum = document.querySelector(".decrease");
 const checkSwitch = document.querySelector(".form-check-input");
 
 // TODO: High Score based on how many obstacles there was in the board during the game played
-// TODO: Leaderboard ? with button to show leaderboard ?
+// ?: Leaderboard ? with button to show leaderboard ?
+
+// ?: Explosion image for snake head on collision
 
 // ! Still needs a title
 // ! game-details needs to be styled better
-
 
 // Buttons to automatically adjust the number of obstacles
 const easy = document.querySelector(".easy");
@@ -83,6 +84,7 @@ const initGame = () => {
 
   // Check for collision with walls
   if (snakeX <= 0 || snakeX > 30 || snakeY <= 0 || snakeY > 30) {
+    description.innerHTML = "You ran into a wall!!!"; // ? Is this necessary if use modal instead
     return (gameOver = true);
   }
 
@@ -90,7 +92,7 @@ const initGame = () => {
   snakeBody[0] = {
     x: snakeX,
     y: snakeY,
-    color: lastFoodColor
+    color: lastFoodColor,
   };
 
   // Check for collision with itself
@@ -98,19 +100,11 @@ const initGame = () => {
 
   // Add obstacles to the HTML
   obstacles.forEach(obstacle => {
-
-    // Check if the obstacle is colliding with any segment of the snake body
-    for (let i = 0; i < snakeBody.length - 1; i++) {
-      // If so, need to change position of the obstacle
-      if (obstacle.x === snakeBody[i].x && obstacle.y === snakeBody[i].y) {
-        updateObstaclePositions();
-      }
-    }
-
     html += `<i class="bi bi-exclamation-diamond-fill obstacle gradient-text" style="grid-area: ${obstacle.y} / ${obstacle.x}"></i>`;
   });
 
   playBoard.innerHTML = html;
+
 };
 
 const updateFoodPosition = () => {
@@ -122,8 +116,12 @@ const updateFoodPosition = () => {
 
 const updateObstaclePositions = () => {
   obstacles = [];
+  let obstaclePosition;
   for (let i = 0; i < numOfObstacles; i++) {
-    obstacles.push(updateObstaclePosition());
+    do {
+      obstaclePosition = updateObstaclePosition();
+    } while (snakeBody.some(segment => segment.x === obstaclePosition.x && segment.y === obstaclePosition.y));
+    obstacles.push(obstaclePosition);
   }
 };
 
@@ -145,7 +143,9 @@ const getRandomColor = () => {
 };
 
 const checkGameState = () => {
+  // Checking collision between snake and obstacle
   if (obstacles.some(obstacle => snakeX === obstacle.x && snakeY === obstacle.y)) {
+    description.innerHTML = "Oh no! You ran into an obstacle"; // ? Is this necessary if use modal instead?
     gameOver = true;
   }
 };
@@ -218,10 +218,9 @@ const changeDirection = (e) => {
 };
 
 obstaclesNum.innerHTML = numOfObstacles;
-updateFoodPosition();
-updateObstaclePositions();
+updateAll();
 setIntervalId = setInterval(initGame, 200);
-gameOverInterval = setInterval(checkGameState, 200);
+setIntervalId = setInterval(checkGameState, 200);
 document.addEventListener("keyup", changeDirection);
 
 
@@ -244,13 +243,14 @@ function checkSelfCollision(html) {
 
 function eatFood() {
   if (snakeX === foodX && snakeY === foodY) {
-    description.innerHTML = "Points earned: " + foodColors[foodColor];
-    setTimeout(() => {
-      description.innerHTML = "";
-    }, 2000);
-    const numOfSegments = foodColors[foodColor];
+    console.log(snakeBody);
+    // Prevent the snake from growing into obstacles
+    const numOfSegments = foodColors[foodColor]; // Number of segments added is based on food color
     for (let i = 0; i < numOfSegments; i++) {
-      snakeBody.push({ x: snakeX, y: snakeY, color: foodColor }); // Add new segments to snake depending on points added
+      // Check if the new segment would overlap with an obstacle
+      if (!obstacles.some(obstacle => snakeX === obstacle.x && snakeY === obstacle.y)) {
+        snakeBody.push({ x: snakeX, y: snakeY, color: foodColor }); // ! An obstacle cannot spawn too close to a food item
+      }
     }
     lastFoodColor = foodColor;
     score += foodPoints;

@@ -38,6 +38,11 @@ body {
   justify-content: space-between;
 }
 
+.snake-head-collision {
+  background-image: url("./src/img/explosion.png");
+  background-size: contain;
+}
+
 .obstaclesDetails {
   width: 4rem;
 }
