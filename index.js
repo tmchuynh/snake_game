@@ -99,7 +99,7 @@ const updateFoodPosition = () => {
   foodPoints = foodColors[foodColor]; // Set points based on color
 };
 
-const getObstaclePosition = () => {
+const updateObstaclePosition = () => {
   obstacleX = Math.floor(Math.random() * 30) + 1;
   obstacleY = Math.floor(Math.random() * 30) + 1;
 };
@@ -132,6 +132,7 @@ const resetGame = () => {
   highScore = parseInt(localStorage.getItem("high-score")) || 0;
   highScoreElement.innerText = `High Score: ${highScore}`;
   updateFoodPosition();
+  updateObstaclePosition();
   setIntervalId = setInterval(initGame, 200);
 };
 
@@ -153,5 +154,8 @@ const changeDirection = (e) => {
 };
 
 updateFoodPosition();
+for (let i = 0; i < numOfObstacles.length; i++) {
+  updateObstaclePosition();
+}
 setIntervalId = setInterval(initGame, 200);
 document.addEventListener("keyup", changeDirection);
