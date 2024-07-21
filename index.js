@@ -5,6 +5,7 @@ const controls = document.querySelectorAll(".controls i");
 const obstaclesNum = document.querySelector(".obstacles");
 const increaseObstaclesNum = document.querySelector(".increase");
 const decreaseObstaclesNum = document.querySelector(".decrease");
+const checkSwitch = document.querySelector(".form-check-input");
 
 let gameOver = false;
 let foodX, foodY;
@@ -29,6 +30,8 @@ const foodColors = {
 let foodColor = "#8A4FFF";
 let foodPoints;
 let lastFoodColor = "green";
+let obstacles = [];
+let positionChange = false;
 
 highScoreElement.innerText = `High Score: ${highScore}`;
 
@@ -42,8 +45,16 @@ controls.forEach(button =>
 const initGame = () => {
   if (gameOver) return handleGameOver();
 
+  if (checkSwitch.checked) {
+    positionChange = true;
+  } else {
+    positionChange = false;
+  }
+
+  let html = "";
+
   // Create HTML for food
-  let food = `<div class="food" style="background-color: ${foodColor}; grid-area: ${foodY} / ${foodX}"></div>`;
+  html += `<div class="food" style="background-color: ${foodColor}; grid-area: ${foodY} / ${foodX}"></div>`;
 
   if (snakeX === foodX && snakeY === foodY) {
     const numOfSegments = foodColors[foodColor]; // Number of segments added is based on food color
@@ -57,6 +68,9 @@ const initGame = () => {
     scoreElement.innerText = `Score: ${score}`;
     highScoreElement.innerText = `High Score: ${highScore}`;
     updateFoodPosition();
+    if (positionChange) {
+      updateObstaclePositions();
+    }
   }
 
   // Update snake's head position based on current velocity
@@ -69,6 +83,11 @@ const initGame = () => {
     snakeBody[i].color = lastFoodColor;
   }
 
+  // Check for collision with walls
+  if (snakeX <= 0 || snakeX > 30 || snakeY <= 0 || snakeY > 30) {
+    return (gameOver = true);
+  }
+
   // Update the first segment with the new head position
   snakeBody[0] = {
     x: snakeX,
@@ -78,33 +97,20 @@ const initGame = () => {
 
   // Check for collision with itself
   for (let i = 0; i < snakeBody.length; i++) {
-    food += `<div class="head" style="background-color: ${snakeBody[i].color}; grid-area: ${snakeBody[i].y} / ${snakeBody[i].x}"></div>`;
+    html += `<div class="head" style="background-color: ${snakeBody[i].color}; grid-area: ${snakeBody[i].y} / ${snakeBody[i].x}"></div>`;
 
-    if (
-      i !== 0 &&
-      snakeBody[0].x === snakeBody[i].x &&
-      snakeBody[0].y === snakeBody[i].y
-    ) {
+    if (i !== 0 && snakeBody[0].x === snakeBody[i].x && snakeBody[0].y === snakeBody[i].y) {
       gameOver = true;
     }
   }
-  playBoard.innerHTML += food;
-};
 
-const addObstacles = () => {
-  console.log(numOfObstacles);
-  obstaclesNum.innerHTML = numOfObstacles;
-  const allObstacles = document.querySelectorAll('.obstacle');
-  allObstacles.forEach((obstacle) => {
-    obstacle.remove();
+  // Add obstacles to the HTML
+  obstacles.forEach(obstacle => {
+    html += `<i class="bi bi-exclamation-diamond-fill obstacle gradient-text" style="grid-area: ${obstacle.y} / ${obstacle.x}"></i>`;
   });
 
-  for (let i = 0; i < numOfObstacles; i++) {
-    updateObstaclePosition();
-    obstacle = `<i class="bi bi-exclamation-diamond-fill obstacle gradient-text" style="grid-area: ${obstacleY} / ${obstacleX}"></i>`
-    playBoard.innerHTML += obstacle;
-  }
-}
+  playBoard.innerHTML = html;
+};
 
 const updateFoodPosition = () => {
   foodX = Math.floor(Math.random() * 30) + 3;
@@ -113,9 +119,18 @@ const updateFoodPosition = () => {
   foodPoints = foodColors[foodColor]; // Set points based on color
 };
 
+const updateObstaclePositions = () => {
+  obstacles = [];
+  for (let i = 0; i < numOfObstacles; i++) {
+    obstacles.push(updateObstaclePosition());
+  }
+};
+
 const updateObstaclePosition = () => {
-  obstacleX = Math.floor(Math.random() * 25) + 1;
-  obstacleY = Math.floor(Math.random() * 25) + 1;
+  return {
+    x: Math.floor(Math.random() * 28) + 2,
+    y: Math.floor(Math.random() * 28) + 2
+  };
 };
 
 const updateSnakePosition = () => {
@@ -129,10 +144,10 @@ const getRandomColor = () => {
 };
 
 const checkGameState = () => {
-  if (snakeX === obstacleX && snakeY === obstacleY) {
-    return (gameOver = true);
+  if (obstacles.some(obstacle => snakeX === obstacle.x && snakeY === obstacle.y)) {
+    gameOver = true;
   }
-}
+};
 
 const handleGameOver = () => {
   clearInterval(setIntervalId);
@@ -142,12 +157,14 @@ const handleGameOver = () => {
 
 increaseObstaclesNum.addEventListener("click", () => {
   numOfObstacles++;
-  addObstacles();
+  obstaclesNum.innerHTML = numOfObstacles;
+  updateObstaclePositions();
 })
 
 decreaseObstaclesNum.addEventListener("click", () => {
   numOfObstacles--;
-  addObstacles();
+  obstaclesNum.innerHTML = numOfObstacles;
+  updateObstaclePositions();
 })
 
 const resetGame = () => {
@@ -185,7 +202,7 @@ const changeDirection = (e) => {
 
 obstaclesNum.innerHTML = numOfObstacles;
 updateFoodPosition();
-addObstacles();
+updateObstaclePositions();
 setIntervalId = setInterval(initGame, 200);
 gameOverInterval = setInterval(checkGameState, 200);
 document.addEventListener("keyup", changeDirection);
