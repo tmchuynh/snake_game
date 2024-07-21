@@ -8,6 +8,7 @@ let foodX, foodY;
 let snakeX = 15, snakeY = 15;
 let velocityX = 0, velocityY = 0;
 let obstacleX = 25, obstacleY = 17;
+let obstacle;
 let numOfObstacles = 1;
 let snakeBody = [];
 let setIntervalId;
@@ -39,7 +40,6 @@ const initGame = () => {
 
   // Create HTML for food
   let food = `<div class="food" style="background-color: ${foodColor}; grid-area: ${foodY} / ${foodX}"></div>`;
-  let obstacle = `<i class="bi bi-exclamation-diamond-fill obstacle gradient-text" style="grid-area: ${obstacleY} / ${obstacleX}"></i>`
 
   if (snakeX === foodX && snakeY === foodY) {
     const numOfSegments = foodColors[foodColor]; // Number of segments added is based on food color
@@ -92,6 +92,17 @@ const initGame = () => {
 
   playBoard.innerHTML = food + obstacle;
 };
+
+const addObstacles = () => {
+  for (let i = 0; i < numOfObstacles; i++) {
+    updateObstaclePosition();
+    obstacle = `<i class="bi bi-exclamation-diamond-fill obstacle gradient-text" style="grid-area: ${obstacleY} / ${obstacleX}"></i>`
+    playBoard.innerHTML += obstacle;
+  }
+
+
+
+}
 
 const updateFoodPosition = () => {
   foodX = Math.floor(Math.random() * 30) + 1;
@@ -155,8 +166,6 @@ const changeDirection = (e) => {
 };
 
 updateFoodPosition();
-for (let i = 0; i < numOfObstacles.length; i++) {
-  updateObstaclePosition();
-}
+addObstacles();
 setIntervalId = setInterval(initGame, 200);
 document.addEventListener("keyup", changeDirection);

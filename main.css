@@ -29,6 +29,7 @@ body {
   font-weight: 500;
   font-size: 1.2rem;
   padding: 20px 27px;
+  height: fit-content;
   display: flex;
   justify-content: space-between;
 }
