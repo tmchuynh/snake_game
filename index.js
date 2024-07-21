@@ -9,6 +9,8 @@ let snakeX = 15,
   snakeY = 15;
 let velocityX = 0,
   velocityY = 0;
+let obstacleX, obstacleY;
+let randomNumber = 0;
 let snakeBody = [];
 let setIntervalId;
 let score = 0;
@@ -20,6 +22,8 @@ const foodColors = {
   yellow: 4, // Yellow
   purple: 5 // Magenta
 };
+
+<i class="bi bi-exclamation-diamond-fill"></i>
 
 let foodColor = "red";
 let foodPoints;
@@ -44,7 +48,6 @@ const initGame = () => {
   if (snakeX === foodX && snakeY === foodY) {
     numOfSegments = foodColors[foodColor]; // The same number of points gained is how many segments gets added to the snake's body
     for (i = 0; i < numOfSegments; i++) {
-
       snakeBody.push({ x: snakeX, y: snakeY, color: foodColor });
     }
     lastFoodColor = foodColor;
@@ -100,6 +103,11 @@ const updateFoodPosition = () => {
   foodColor = getRandomColor();
   foodPoints = foodColors[foodColor]; // Get points based on color
 };
+
+const updateObstaclePosition = () => {
+  obstacleX = Math.floor(Math.random * 30) + 1;
+  obstacleY = Math.floor(Math.random() * 30) + 1;
+}
 
 const getRandomColor = () => {
   const colors = Object.keys(foodColors);
