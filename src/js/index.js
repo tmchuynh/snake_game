@@ -34,8 +34,7 @@ let velocityX = 0, velocityY = 0;
 let obstacleX = 25, obstacleY = 17;
 let numOfObstacles = 4; // default
 let snakeBody = [];
-let foodColor = "#8A4FFF";
-let foodPoints;
+
 let lastFoodColor = "green";
 let obstacles = [];
 let positionChange = false;
@@ -43,7 +42,11 @@ let peaceful = false;
 let score = 0;
 let setIntervalId, gameOverInterval;
 let highScore = parseInt(localStorage.getItem("high-score")) || 0;
-let foodColors = generateRandomFoodColors(5);
+let foodColors = generateRandomFoodColors(5); // Object of the colors and point values
+let foodColor = Object.keys(foodColors)[0];
+let foodPoints = Object.values(foodColors)[0];
+console.log(foodColor, foodPoints);
+console.log(foodColors);
 
 highScoreElement.innerText = `High Score: ${highScore}`;
 
@@ -55,6 +58,7 @@ controls.forEach(button =>
 );
 
 const initGame = () => {
+
   if (gameOver) return handleGameOver();
 
   if (checkSwitch.checked) {
@@ -99,6 +103,7 @@ const initGame = () => {
 
   // Check for collision with itself
   html = checkSelfCollision(html);
+  checkGameState(); // Add this here to ensure game state is checked
 
   // Add obstacles to the HTML
   obstacles.forEach(obstacle => {
@@ -194,7 +199,10 @@ const updateSnakePosition = () => {
 };
 
 const getRandomColor = () => {
-  const colors = Object.keys(foodColors);
+  description.innerHTML = `Color is ${foodColor} and it has ${foodPoints} points!`
+  console.log(foodColor, foodPoints);
+  console.log(foodColors);
+  const colors = Object.keys(foodColors); // Array of just the colors
   return colors[Math.floor(Math.random() * colors.length)];
 };
 
@@ -347,12 +355,12 @@ function checkSelfCollision(html) {
 
 function eatFood() {
   if (snakeX === foodX && snakeY === foodY) {
-    description.innerHTML = `You gained ${foodColors[foodColor]} points!`
+    description.innerHTML = `You gained ${foodPoints} points!`
     setTimeout(function () {
       description.innerHTML = "";
-    }, 300);
+    }, 3000);
     // Prevent the snake from growing into obstacles
-    const numOfSegments = foodColors[foodColor]; // Number of segments added is based on food color
+    const numOfSegments = foodPoints; // Number of segments added is based on food color
     for (let i = 0; i < numOfSegments; i++) { // ! This for loop should not need to exist
       // Check if the new segment would overlap with an obstacle
       if (!obstacles.forEach(obstacle => snakeX === obstacle.x && snakeY === obstacle.y)) {
@@ -376,15 +384,10 @@ function eatFood() {
 // Generate a set of random colors and associate them with point values
 function generateRandomFoodColors(numColors) {
   const colors = randomColors(numColors); // Array of random colors
-  console.log(colors);
   shuffle(colors);
-  console.log(colors);
   const pointValues = generateUniqueRandomNumbers(numColors, 1, 7);
-  console.log(pointValues);
   shuffle(pointValues);
-  console.log(pointValues);
   const foodColors = arrayToObject(colors, pointValues);
-  console.log(foodColors);
   return foodColors;
 };
 
