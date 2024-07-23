@@ -17,6 +17,9 @@ const checkSwitch = document.querySelector(".form-check-input");
 // ! Still needs a title
 // ! game-details needs to be styled better
 
+// ! numOfObstacles can be a negative number
+// ! snake continues moving if it's moving while numOfObstacles gets updated o.O
+
 // Buttons to automatically adjust the number of obstacles
 const easy = document.querySelector(".easy");
 const medium = document.querySelector(".medium");
