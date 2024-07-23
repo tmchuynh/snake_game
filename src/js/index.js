@@ -119,33 +119,77 @@ const initGame = () => {
 };
 
 const updateFoodPosition = () => {
-  foodX = Math.floor(Math.random() * 30) + 1;
-  foodY = Math.floor(Math.random() * 30) + 1;
+  if (level !== "easy") {
+    const foodPosition = updateFoodPositionWithSafeBox();
+    foodX = foodPosition.x;
+    foodY = foodPosition.y;
+  } else {
+    foodX = Math.floor(Math.random() * 30) + 1;
+    foodY = Math.floor(Math.random() * 30) + 1;
+  }
   foodColor = getRandomColor();
   foodPoints = foodColors[foodColor]; // Set points based on color
 };
+
+const updateFoodPositionWithSafeBox = () => {
+  let validPosition = false;
+  let foodPosition;
+  const foodSafeRatio = Math.floor(ratio * 1.5);
+
+  while (!validPosition) {
+    foodPosition = {
+      x: Math.floor(Math.random() * 30) + 1,
+      y: Math.floor(Math.random() * 30) + 1
+    };
+    validPosition = true;
+
+    // Check if the food is within the "safe box" around the snake's position
+    snakeBody.forEach(segment => {
+      if (
+        (foodPosition.x >= segment.x - foodSafeRatio && foodPosition.x <= segment.x + foodSafeRatio &&
+          foodPosition.y >= segment.y - foodSafeRatio && foodPosition.y <= segment.y + foodSafeRatio)
+      ) {
+        validPosition = false;
+      }
+    });
+  }
+
+  return foodPosition;
+};
+
 
 const updateObstaclePositions = () => {
   obstacles = [];
   let obstaclePosition;
   for (let i = 0; i < numOfObstacles; i++) {
-    do {
+    let validPosition = false;
+    while (!validPosition) {
       obstaclePosition = updateObstaclePosition();
-    } while (snakeBody.forEach(segment => (segment.x === obstaclePosition.x && segment.y === obstaclePosition.y) ||
-      // Ratio around the snake to the obstacle position
-      (obstaclePosition.x < segment.x + ratio && obstaclePosition.x > segment.x && obstaclePosition.y === segment.y) ||
-      (obstaclePosition.x > segment.x - ratio && obstaclePosition.x < segment.x && obstaclePosition.y === segment.y) ||
-      (obstaclePosition.y < segment.y + ratio && obstaclePosition.y > segment.y && obstaclePosition.x === segment.x) ||
-      (obstaclePosition.y > segment.y - ratio && obstaclePosition.y < segment.y && obstaclePosition.x === segment.x) ||
-      // Ratio around the food to the obstacle position
-      (obstaclePosition.x < foodX + ratio && obstaclePosition.x > foodX && obstaclePosition.y === foodY) ||
-      (obstaclePosition.x > foodX - ratio && obstaclePosition.x < foodX && obstaclePosition.y === foodY) ||
-      (obstaclePosition.y < foodY + ratio && obstaclePosition.y > foodY && obstaclePosition.x === foodX) ||
-      (obstaclePosition.y > foodY - ratio && obstaclePosition.y < foodY && obstaclePosition.x === foodX)
-    ));
+      validPosition = true;
+
+      // Check if the obstacle is within the "safe box" around the snake's initial position
+      snakeBody.forEach(segment => {
+        if (
+          (obstaclePosition.x >= segment.x - ratio && obstaclePosition.x <= segment.x + ratio &&
+            obstaclePosition.y >= segment.y - ratio && obstaclePosition.y <= segment.y + ratio)
+        ) {
+          validPosition = false;
+        }
+      });
+
+      // Check if the obstacle is within the "safe box" around the food position
+      if (
+        (obstaclePosition.x >= foodX - ratio && obstaclePosition.x <= foodX + ratio &&
+          obstaclePosition.y >= foodY - ratio && obstaclePosition.y <= foodY + ratio)
+      ) {
+        validPosition = false;
+      }
+    }
     obstacles.push(obstaclePosition);
   }
 };
+
+
 
 const updateObstaclePosition = () => {
   return {
