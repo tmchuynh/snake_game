@@ -131,7 +131,18 @@ const updateObstaclePositions = () => {
   for (let i = 0; i < numOfObstacles; i++) {
     do {
       obstaclePosition = updateObstaclePosition();
-    } while (snakeBody.forEach(segment => segment.x === obstaclePosition.x && segment.y === obstaclePosition.y));
+    } while (snakeBody.forEach(segment => (segment.x === obstaclePosition.x && segment.y === obstaclePosition.y) ||
+      // Ratio around the snake to the obstacle position
+      (obstaclePosition.x < segment.x + ratio && obstaclePosition.x > segment.x && obstaclePosition.y === segment.y) ||
+      (obstaclePosition.x > segment.x - ratio && obstaclePosition.x < segment.x && obstaclePosition.y === segment.y) ||
+      (obstaclePosition.y < segment.y + ratio && obstaclePosition.y > segment.y && obstaclePosition.x === segment.x) ||
+      (obstaclePosition.y > segment.y - ratio && obstaclePosition.y < segment.y && obstaclePosition.x === segment.x) ||
+      // Ratio around the food to the obstacle position
+      (obstaclePosition.x < foodX + ratio && obstaclePosition.x > foodX && obstaclePosition.y === foodY) ||
+      (obstaclePosition.x > foodX - ratio && obstaclePosition.x < foodX && obstaclePosition.y === foodY) ||
+      (obstaclePosition.y < foodY + ratio && obstaclePosition.y > foodY && obstaclePosition.x === foodX) ||
+      (obstaclePosition.y > foodY - ratio && obstaclePosition.y < foodY && obstaclePosition.x === foodX)
+    ));
     obstacles.push(obstaclePosition);
   }
 };
