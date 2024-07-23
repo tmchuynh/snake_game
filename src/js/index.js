@@ -6,6 +6,7 @@ const controls = document.querySelectorAll(".controls i");
 const obstaclesNum = document.querySelector(".obstacles");
 const increaseObstaclesNum = document.querySelector(".increase");
 const decreaseObstaclesNum = document.querySelector(".decrease");
+const peacefulMode = document.querySelector(".peaceful");
 const checkSwitch = document.querySelector(".form-check-input");
 
 // TODO: High Score based on how many obstacles there was in the board during the game played
@@ -46,6 +47,7 @@ let foodPoints;
 let lastFoodColor = "green";
 let obstacles = [];
 let positionChange = false;
+let peaceful = false;
 
 highScoreElement.innerText = `High Score: ${highScore}`;
 
@@ -82,10 +84,14 @@ const initGame = () => {
     snakeBody[i].color = lastFoodColor;
   }
 
-  // Check for collision with walls
-  if (snakeX <= 0 || snakeX > 30 || snakeY <= 0 || snakeY > 30) {
-    description.innerHTML = "You ran into a wall!!!"; // ? Is this necessary if use modal instead
-    return (gameOver = true);
+  if (!peaceful) {
+    // Check for collision with walls
+    if (snakeX <= 0 || snakeX > 30 || snakeY <= 0 || snakeY > 30) {
+      description.innerHTML = "You ran into a wall!!!"; // ? Is this necessary if use modal instead
+      return (gameOver = true);
+    }
+  } else {
+    // NEED TO FIGURE OUT HOW THE SNAKE CAN APPEAR ON THE OTHER SIDE OF THE WALL O.O
   }
 
   // Update the first segment with the new head position
@@ -184,6 +190,11 @@ hard.addEventListener("click", () => {
   numOfObstacles = 10;
   obstaclesNum.innerHTML = numOfObstacles;
   updateAll();
+});
+
+peacefulMode.addEventListener("click", () => {
+  // Toggle peaceful mode
+  peaceful = !peaceful;
 });
 
 const resetGame = () => {
