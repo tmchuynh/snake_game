@@ -14,7 +14,6 @@ const checkSwitch = document.querySelector(".form-check-input");
 
 // ?: Explosion image for snake head on collision
 
-// ! Still needs a title
 // ! game-details needs to be styled better
 
 // ! numOfObstacles can be a negative number
@@ -25,16 +24,22 @@ const easy = document.querySelector(".easy");
 const medium = document.querySelector(".medium");
 const hard = document.querySelector(".hard");
 
-let gameOver = false;
+let obstacle;
 let foodX, foodY;
+let gameOver = false;
 let snakeX = 15, snakeY = 15;
 let velocityX = 0, velocityY = 0;
 let obstacleX = 25, obstacleY = 17;
-let obstacle;
 let numOfObstacles = 1; // default
 let snakeBody = [];
-let setIntervalId, gameOverInterval;
+let foodColor = "#8A4FFF";
+let foodPoints;
+let lastFoodColor = "green";
+let obstacles = [];
+let positionChange = false;
+let peaceful = false;
 let score = 0;
+let setIntervalId, gameOverInterval;
 let highScore = parseInt(localStorage.getItem("high-score")) || 0;
 const foodColors = {
   "#D741A7": 1, // pink
@@ -45,12 +50,7 @@ const foodColors = {
   "#99621E": 6 // sand
 };
 
-let foodColor = "#8A4FFF";
-let foodPoints;
-let lastFoodColor = "green";
-let obstacles = [];
-let positionChange = false;
-let peaceful = false;
+
 
 highScoreElement.innerText = `High Score: ${highScore}`;
 
@@ -202,11 +202,17 @@ peacefulMode.addEventListener("click", () => {
 
 const resetGame = () => {
   // Reset all necessary variables and state
-  gameOver = false;
-  velocityX = 0;
-  velocityY = 0;
-  snakeBody = [];
-  lastFoodColor = "green";
+  let gameOver = false;
+  let velocityX = 0, velocityY = 0;
+  let numOfObstacles = 1; // default
+  obstaclesNum.innerHTML = numOfObstacles;
+  let snakeBody = [];
+  let foodColor = "#8A4FFF";
+  let lastFoodColor = "green";
+  let obstacles = [];
+  let positionChange = false;
+  let peaceful = false;
+  let score = 0;
   score = 0;
   highScore = parseInt(localStorage.getItem("high-score")) || 0;
   highScoreElement.innerText = `High Score: ${highScore}`;
@@ -231,8 +237,7 @@ const changeDirection = (e) => {
   }
 };
 
-obstaclesNum.innerHTML = numOfObstacles;
-updateAll();
+resetGame();
 setIntervalId = setInterval(initGame, 200);
 setIntervalId = setInterval(checkGameState, 200);
 document.addEventListener("keyup", changeDirection);
@@ -263,7 +268,8 @@ function eatFood() {
     for (let i = 0; i < numOfSegments; i++) {
       // Check if the new segment would overlap with an obstacle
       if (!obstacles.some(obstacle => snakeX === obstacle.x && snakeY === obstacle.y)) {
-        snakeBody.push({ x: snakeX, y: snakeY, color: foodColor }); // ! An obstacle cannot spawn too close to a food item
+        snakeBody.push({ x: snakeX, y: snakeY, color: foodColor });
+        // ! An obstacle cannot spawn too close to a food item
       }
     }
     lastFoodColor = foodColor;
