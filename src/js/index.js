@@ -208,7 +208,7 @@ const getRandomColor = () => {
 
 const checkGameState = () => {
   // Checking collision between snake and obstacle
-  if (obstacles.forEach(obstacle => snakeX === obstacle.x && snakeY === obstacle.y)) {
+  if (obstacles.some(obstacle => snakeX === obstacle.x && snakeY === obstacle.y)) {
     description.innerHTML = "Oh no! You ran into an obstacle"; // ? Is this necessary if use modal instead?
     gameOver = true;
   }
@@ -330,7 +330,7 @@ const changeDirection = (e) => {
 };
 
 resetGame();
-setIntervalId = setInterval(initGame, 200);
+setIntervalId = setInterval(initGame, 400);
 setIntervalId = setInterval(checkGameState, 200);
 document.addEventListener("keyup", changeDirection);
 
@@ -339,7 +339,7 @@ function updateAll() {
   updateFoodPosition();
   updateSnakePosition();
   updateObstaclePositions();
-  foodColors = generateRandomFoodColors(5)
+  foodColors = generateRandomFoodColors(5);
 }
 
 function checkSelfCollision(html) {
@@ -361,11 +361,10 @@ function eatFood() {
     }, 3000);
     // Prevent the snake from growing into obstacles
     const numOfSegments = foodPoints; // Number of segments added is based on food color
-    for (let i = 0; i < numOfSegments; i++) { // ! This for loop should not need to exist
+    for (let i = 0; i < numOfSegments; i++) {
       // Check if the new segment would overlap with an obstacle
       if (!obstacles.forEach(obstacle => snakeX === obstacle.x && snakeY === obstacle.y)) {
         snakeBody.push({ x: snakeX, y: snakeY, color: foodColor });
-        // ! An obstacle cannot spawn too close to a food item
       }
     }
     lastFoodColor = foodColor;
@@ -376,6 +375,10 @@ function eatFood() {
     highScoreElement.innerText = `High Score: ${highScore}`;
     updateFoodPosition();
     if (positionChange) {
+      if (level !== "easy") {
+        // TODO: Add a "warning" that says that the food color may not be the same point value if it appears again
+        foodColors = generateRandomFoodColors(5);
+      }
       updateObstaclePositions();
     }
   }
@@ -390,15 +393,6 @@ function generateRandomFoodColors(numColors) {
   const foodColors = arrayToObject(colors, pointValues);
   return foodColors;
 };
-
-// function randomColors(number) {
-//   let temp = [];
-//   for (let i = 0; i < number; i++) {
-//     let randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-//     temp.push(randomColor);
-//   }
-//   return temp;
-// }
 
 function generateHSLColor(hue = Math.floor(Math.random() * 360), saturation = 100, lightness = Math.floor(Math.random() * 80) + 30) {
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
@@ -446,3 +440,11 @@ function shuffle(array) {
   }
   return array;
 }
+
+const showModal = (message) => {
+  // Example: Assuming you have a modal element
+  const modal = document.querySelector(".modal");
+  const modalMessage = modal.querySelector(".modal-message");
+  modalMessage.innerText = message;
+  modal.style.display = "block"; // Show the modal
+};
