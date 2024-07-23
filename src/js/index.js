@@ -24,13 +24,15 @@ const easy = document.querySelector(".easy");
 const medium = document.querySelector(".medium");
 const hard = document.querySelector(".hard");
 
+let level = "easy";
+let ratio = 5;
 let obstacle;
 let foodX, foodY;
 let gameOver = false;
 let snakeX = 15, snakeY = 15;
 let velocityX = 0, velocityY = 0;
 let obstacleX = 25, obstacleY = 17;
-let numOfObstacles = 1; // default
+let numOfObstacles = 4; // default
 let snakeBody = [];
 let foodColor = "#8A4FFF";
 let foodPoints;
@@ -129,7 +131,7 @@ const updateObstaclePositions = () => {
   for (let i = 0; i < numOfObstacles; i++) {
     do {
       obstaclePosition = updateObstaclePosition();
-    } while (snakeBody.some(segment => segment.x === obstaclePosition.x && segment.y === obstaclePosition.y));
+    } while (snakeBody.forEach(segment => segment.x === obstaclePosition.x && segment.y === obstaclePosition.y));
     obstacles.push(obstaclePosition);
   }
 };
@@ -153,7 +155,7 @@ const getRandomColor = () => {
 
 const checkGameState = () => {
   // Checking collision between snake and obstacle
-  if (obstacles.some(obstacle => snakeX === obstacle.x && snakeY === obstacle.y)) {
+  if (obstacles.forEach(obstacle => snakeX === obstacle.x && snakeY === obstacle.y)) {
     description.innerHTML = "Oh no! You ran into an obstacle"; // ? Is this necessary if use modal instead?
     gameOver = true;
   }
@@ -167,30 +169,50 @@ const handleGameOver = () => {
 
 increaseObstaclesNum.addEventListener("click", () => {
   numOfObstacles++;
+  calculateRatio();
   obstaclesNum.innerHTML = numOfObstacles;
   updateAll();
 })
 
 decreaseObstaclesNum.addEventListener("click", () => {
   numOfObstacles--;
+  calculateRatio();
   obstaclesNum.innerHTML = numOfObstacles;
   updateAll();
 })
 
 easy.addEventListener("click", () => {
   numOfObstacles = 0;
+  calculateRatio();
+  level = "easy";
+  description.innerHTML = `Level: ${level} Ratio: ${ratio}`;
+  setTimeout(function () {
+    description.innerHTML = "";
+  }, 300);
   obstaclesNum.innerHTML = numOfObstacles;
   updateAll();
 });
 
 medium.addEventListener("click", () => {
-  numOfObstacles = 3;
+  numOfObstacles = 5;
+  calculateRatio();
+  level = "medium";
+  description.innerHTML = `Level: ${level} Ratio: ${ratio}`;
+  setTimeout(function () {
+    description.innerHTML = "";
+  }, 300);
   obstaclesNum.innerHTML = numOfObstacles;
   updateAll();
 });
 
 hard.addEventListener("click", () => {
   numOfObstacles = 10;
+  calculateRatio();
+  level = "hard";
+  description.innerHTML = `Level: ${level} Ratio: ${ratio}`;
+  setTimeout(function () {
+    description.innerHTML = "";
+  }, 300);
   obstaclesNum.innerHTML = numOfObstacles;
   updateAll();
 });
@@ -200,24 +222,41 @@ peacefulMode.addEventListener("click", () => {
   peaceful = !peaceful;
 });
 
+function calculateRatio() {
+  if (numOfObstacles >= 0 && numOfObstacles <= 5) {
+    level = "easy";
+    ratio = 5;
+  } else if (numOfObstacles >= 6 && numOfObstacles <= 10) {
+    level = "medium";
+    ratio = 3;
+  } else if (numOfObstacles > 10) {
+    level = "hard";
+    ratio = 0;
+  } else {
+    alert("Not a valid number of obstacles!!!")
+  }
+}
+
 const resetGame = () => {
   // Reset all necessary variables and state
-  let gameOver = false;
-  let velocityX = 0, velocityY = 0;
-  let numOfObstacles = 1; // default
-  obstaclesNum.innerHTML = numOfObstacles;
-  let snakeBody = [];
-  let foodColor = "#8A4FFF";
-  let lastFoodColor = "green";
-  let obstacles = [];
-  let positionChange = false;
-  let peaceful = false;
-  let score = 0;
+  gameOver = false;
+  velocityX = 0;
+  velocityY = 0;
   score = 0;
+  numOfObstacles = 4; // default
+  level = "easy";
+  ratio = 5;
+  obstaclesNum.innerHTML = numOfObstacles;
+  snakeBody = [];
+  foodColor = "#8A4FFF";
+  lastFoodColor = "green";
+  obstacles = [];
+  positionChange = false;
+  peaceful = false;
   highScore = parseInt(localStorage.getItem("high-score")) || 0;
   highScoreElement.innerText = `High Score: ${highScore}`;
-  updateAll();
   setIntervalId = setInterval(initGame, 200);
+  updateAll();
 };
 
 const changeDirection = (e) => {
@@ -262,12 +301,15 @@ function checkSelfCollision(html) {
 
 function eatFood() {
   if (snakeX === foodX && snakeY === foodY) {
-    console.log(snakeBody);
+    description.innerHTML = `You gained ${foodColors[foodColor]} points!`
+    setTimeout(function () {
+      description.innerHTML = "";
+    }, 300);
     // Prevent the snake from growing into obstacles
     const numOfSegments = foodColors[foodColor]; // Number of segments added is based on food color
-    for (let i = 0; i < numOfSegments; i++) {
+    for (let i = 0; i < numOfSegments; i++) { // ! This for loop should not need to exist
       // Check if the new segment would overlap with an obstacle
-      if (!obstacles.some(obstacle => snakeX === obstacle.x && snakeY === obstacle.y)) {
+      if (!obstacles.forEach(obstacle => snakeX === obstacle.x && snakeY === obstacle.y)) {
         snakeBody.push({ x: snakeX, y: snakeY, color: foodColor });
         // ! An obstacle cannot spawn too close to a food item
       }
