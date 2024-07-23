@@ -43,16 +43,7 @@ let peaceful = false;
 let score = 0;
 let setIntervalId, gameOverInterval;
 let highScore = parseInt(localStorage.getItem("high-score")) || 0;
-const foodColors = {
-  "#D741A7": 1, // pink
-  "#8A4FFF": 2, // light purple
-  "#0FF4C6": 3, // cyan
-  "#F55D3E": 4, // orange
-  "#6E7E85": 5, // grey
-  "#99621E": 6 // sand
-};
-
-
+let foodColors = generateRandomFoodColors(5);
 
 highScoreElement.innerText = `High Score: ${highScore}`;
 
@@ -171,7 +162,8 @@ const updateObstaclePositions = () => {
       snakeBody.forEach(segment => {
         if (
           (obstaclePosition.x >= segment.x - ratio && obstaclePosition.x <= segment.x + ratio &&
-            obstaclePosition.y >= segment.y - ratio && obstaclePosition.y <= segment.y + ratio)
+            obstaclePosition.y >= segment.y - ratio && obstaclePosition.y <= segment.y + ratio) ||
+          (obstaclePosition.x === segment.x && obstaclePosition.y === segment.y)
         ) {
           validPosition = false;
         }
@@ -188,8 +180,6 @@ const updateObstaclePositions = () => {
     obstacles.push(obstaclePosition);
   }
 };
-
-
 
 const updateObstaclePosition = () => {
   return {
@@ -341,6 +331,7 @@ function updateAll() {
   updateFoodPosition();
   updateSnakePosition();
   updateObstaclePositions();
+  foodColors = generateRandomFoodColors(5)
 }
 
 function checkSelfCollision(html) {
@@ -382,3 +373,73 @@ function eatFood() {
   }
 }
 
+// Generate a set of random colors and associate them with point values
+function generateRandomFoodColors(numColors) {
+  const colors = randomColors(numColors); // Array of random colors
+  console.log(colors);
+  shuffle(colors);
+  console.log(colors);
+  const pointValues = generateUniqueRandomNumbers(numColors, 1, 7);
+  console.log(pointValues);
+  shuffle(pointValues);
+  console.log(pointValues);
+  const foodColors = arrayToObject(colors, pointValues);
+  console.log(foodColors);
+  return foodColors;
+};
+
+// function randomColors(number) {
+//   let temp = [];
+//   for (let i = 0; i < number; i++) {
+//     let randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+//     temp.push(randomColor);
+//   }
+//   return temp;
+// }
+
+function generateHSLColor(hue = Math.floor(Math.random() * 360), saturation = 100, lightness = Math.floor(Math.random() * 80) + 30) {
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+}
+
+function randomColors(count) {
+  const colors = new Set();
+
+  while (colors.size < count) {
+    const hue = Math.floor(Math.random() * 360); // Random hue between 0 and 359
+    colors.add(generateHSLColor(hue));
+  }
+
+  return Array.from(colors);
+}
+
+
+function arrayToObject(keys, values) {
+  const result = {};
+  keys.forEach((key, index) => {
+    result[key] = values[index] || null; // Assign value, or null if no corresponding value
+  });
+  return result;
+}
+
+function generateUniqueRandomNumbers(count, min, max) {
+  if (max - min <= count) {
+    max += Math.floor(count / 1.3);
+  }
+  const uniqueNumbers = new Set();
+
+  while (uniqueNumbers.size < count) {
+    const randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
+    uniqueNumbers.add(randomNum);
+  }
+
+  return Array.from(uniqueNumbers);
+}
+
+// Shuffle array function
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
