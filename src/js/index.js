@@ -9,16 +9,9 @@ const decreaseObstaclesNum = document.querySelector(".decrease");
 const peacefulMode = document.getElementById("peacefulMode");
 const obstaclesMove = document.getElementById("obstaclesMove");
 
-// TODO: High Score based on how many obstacles there was in the board during the game played
-// ?: Leaderboard ? with button to show leaderboard ?
-
 // TODO: Peaceful Mode --> go through walls ???? 
 
-// ?: Explosion image for snake head on collision
-
 // ! game-details needs to be styled better
-
-// ! snake continues moving if it's moving while numOfObstacles gets updated o.O
 
 // Buttons to automatically adjust the number of obstacles
 const easy = document.querySelector(".easy");
@@ -347,6 +340,8 @@ document.addEventListener("keyup", changeDirection);
 
 
 function updateAll() {
+  velocityX = 0;
+  velocityY = 0;
   updateFoodPosition();
   updateSnakePosition();
   updateObstaclePositions();
