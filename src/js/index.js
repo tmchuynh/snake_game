@@ -6,17 +6,18 @@ const controls = document.querySelectorAll(".controls i");
 const obstaclesNum = document.querySelector(".obstacles");
 const increaseObstaclesNum = document.querySelector(".increase");
 const decreaseObstaclesNum = document.querySelector(".decrease");
-const peacefulMode = document.querySelector(".peaceful");
-const checkSwitch = document.querySelector(".form-check-input");
+const peacefulMode = document.getElementById("peacefulMode");
+const obstaclesMove = document.getElementById("obstaclesMove");
 
 // TODO: High Score based on how many obstacles there was in the board during the game played
 // ?: Leaderboard ? with button to show leaderboard ?
+
+// TODO: Peaceful Mode --> go through walls ???? 
 
 // ?: Explosion image for snake head on collision
 
 // ! game-details needs to be styled better
 
-// ! numOfObstacles can be a negative number
 // ! snake continues moving if it's moving while numOfObstacles gets updated o.O
 
 // Buttons to automatically adjust the number of obstacles
@@ -58,13 +59,18 @@ controls.forEach(button =>
 );
 
 const initGame = () => {
-
   if (gameOver) return handleGameOver();
 
-  if (checkSwitch.checked) {
+  if (obstaclesMove.checked) {
     positionChange = true;
   } else {
     positionChange = false;
+  }
+
+  if (peacefulMode.checked) {
+    peaceful = true;
+  } else {
+    peaceful = false;
   }
 
   let html = "";
@@ -271,8 +277,13 @@ hard.addEventListener("click", () => {
 });
 
 peacefulMode.addEventListener("click", () => {
-  // Toggle peaceful mode
   peaceful = !peaceful;
+  updateAll();
+});
+
+obstaclesMove.addEventListener("click", () => {
+  positionChange = !positionChange;
+  updateAll();
 });
 
 function calculateRatio() {
