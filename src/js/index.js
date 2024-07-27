@@ -83,14 +83,22 @@ const initGame = () => {
     snakeBody[i].color = lastFoodColor;
   }
 
-  if (!peaceful) {
-    // Check for collision with walls
-    if (snakeX <= 0 || snakeX > 30 || snakeY <= 0 || snakeY > 30) {
-      description.innerHTML = "You ran into a wall!!!"; // ? Is this necessary if use modal instead
+  // Check for collision with walls
+  if (snakeX <= 0 || snakeX > 30 || snakeY <= 0 || snakeY > 30) {
+    if (peaceful) {
+      if (snakeX <= 0) {
+        snakeX += 30;
+      } else if (snakeX > 30) {
+        snakeX -= 30;
+      } else if (snakeY <= 0) {
+        snakeY += 30
+      } else {
+        snakeY -= 30;
+      }
+    } else {
+      showModal("You ran into a wall!!!");
       return (gameOver = true);
     }
-  } else {
-    // NEED TO FIGURE OUT HOW THE SNAKE CAN APPEAR ON THE OTHER SIDE OF THE WALL O.O
   }
 
   // Update the first segment with the new head position
@@ -208,14 +216,14 @@ const getRandomColor = () => {
 const checkGameState = () => {
   // Checking collision between snake and obstacle
   if (obstacles.some(obstacle => snakeX === obstacle.x && snakeY === obstacle.y)) {
-    description.innerHTML = "Oh no! You ran into an obstacle"; // ? Is this necessary if use modal instead?
+    showModal("Oh no! You ran into an obstacle");
     gameOver = true;
   }
 };
 
 const handleGameOver = () => {
   clearInterval(setIntervalId);
-  alert("Game Over! Press OK to replay ...");
+  showModal("Game Over! Press OK to replay ...");
   resetGame();
 };
 
@@ -289,8 +297,6 @@ function calculateRatio() {
   } else if (numOfObstacles > 10) {
     level = "hard";
     ratio = 0;
-  } else {
-    alert("Not a valid number of obstacles!!!")
   }
 }
 
@@ -382,7 +388,6 @@ function eatFood() {
     updateFoodPosition();
     if (positionChange) {
       if (level !== "easy") {
-        // TODO: Add a "warning" that says that the food color may not be the same point value if it appears again
         foodColors = generateRandomFoodColors(5);
       }
       updateObstaclePositions();
@@ -448,9 +453,13 @@ function shuffle(array) {
 }
 
 const showModal = (message) => {
-  // Example: Assuming you have a modal element
   const modal = document.querySelector(".modal");
   const modalMessage = modal.querySelector(".modal-message");
   modalMessage.innerText = message;
-  modal.style.display = "block"; // Show the modal
+  modal.style.display = "block";
 };
+
+function closeModal() {
+  const modal = document.querySelector(".modal");
+  modal.style.display = "none";
+}
