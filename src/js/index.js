@@ -387,9 +387,6 @@ function eatFood() {
     highScoreElement.innerText = `High Score: ${highScore}`;
     updateFoodPosition();
     if (positionChange) {
-      if (level !== "easy") {
-        foodColors = generateRandomFoodColors(5);
-      }
       updateObstaclePositions();
     }
   }
