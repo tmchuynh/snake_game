@@ -9,10 +9,6 @@ const decreaseObstaclesNum = document.querySelector(".decrease");
 const peacefulMode = document.getElementById("peacefulMode");
 const obstaclesMove = document.getElementById("obstaclesMove");
 
-// TODO: Peaceful Mode --> go through walls ???? 
-
-// ! game-details needs to be styled better
-
 // Buttons to automatically adjust the number of obstacles
 const easy = document.querySelector(".easy");
 const medium = document.querySelector(".medium");
