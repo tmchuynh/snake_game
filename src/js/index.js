@@ -1,7 +1,6 @@
 const playBoard = document.querySelector(".play-board");
 const scoreElement = document.querySelector(".score");
 const highScoreElement = document.querySelector(".high-score");
-const description = document.querySelector(".description");
 const controls = document.querySelectorAll(".controls i");
 const obstaclesNum = document.querySelector(".obstacles");
 const increaseObstaclesNum = document.querySelector(".increase");
@@ -35,9 +34,6 @@ let highScore = parseInt(localStorage.getItem("high-score")) || 0;
 let foodColors = generateRandomFoodColors(5); // Object of the colors and point values
 let foodColor = Object.keys(foodColors)[0];
 let foodPoints = Object.values(foodColors)[0];
-console.log(foodColor, foodPoints);
-console.log(foodColors);
-
 highScoreElement.innerText = `High Score: ${highScore}`;
 
 // Calling changeDirection on each key click and passing key dataset value as an object
@@ -202,9 +198,6 @@ const updateSnakePosition = () => {
 };
 
 const getRandomColor = () => {
-  description.innerHTML = `Color is ${foodColor} and it has ${foodPoints} points!`
-  console.log(foodColor, foodPoints);
-  console.log(foodColors);
   const colors = Object.keys(foodColors); // Array of just the colors
   return colors[Math.floor(Math.random() * colors.length)];
 };
@@ -241,10 +234,6 @@ easy.addEventListener("click", () => {
   numOfObstacles = 0;
   calculateRatio();
   level = "easy";
-  description.innerHTML = `Level: ${level} Ratio: ${ratio}`;
-  setTimeout(function () {
-    description.innerHTML = "";
-  }, 300);
   obstaclesNum.innerHTML = numOfObstacles;
   updateAll();
 });
@@ -253,10 +242,6 @@ medium.addEventListener("click", () => {
   numOfObstacles = 5;
   calculateRatio();
   level = "medium";
-  description.innerHTML = `Level: ${level} Ratio: ${ratio}`;
-  setTimeout(function () {
-    description.innerHTML = "";
-  }, 300);
   obstaclesNum.innerHTML = numOfObstacles;
   updateAll();
 });
@@ -265,10 +250,6 @@ hard.addEventListener("click", () => {
   numOfObstacles = 10;
   calculateRatio();
   level = "hard";
-  description.innerHTML = `Level: ${level} Ratio: ${ratio}`;
-  setTimeout(function () {
-    description.innerHTML = "";
-  }, 300);
   obstaclesNum.innerHTML = numOfObstacles;
   updateAll();
 });
@@ -363,10 +344,6 @@ function checkSelfCollision(html) {
 
 function eatFood() {
   if (snakeX === foodX && snakeY === foodY) {
-    description.innerHTML = `You gained ${foodPoints} points!`
-    setTimeout(function () {
-      description.innerHTML = "";
-    }, 3000);
     // Prevent the snake from growing into obstacles
     const numOfSegments = foodPoints; // Number of segments added is based on food color
     for (let i = 0; i < numOfSegments; i++) {
